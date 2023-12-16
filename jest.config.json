@@ -1,0 +1,19 @@
+{
+	"preset": "ts-jest",
+	"testEnvironment": "node",
+	"modulePaths": [
+		"<rootDir>/source"
+	],
+  	"collectCoverageFrom": [
+		"source/**/*.(ts|js)",
+		"!source/index.ts",
+		"!source/**/*.module.ts",
+		"!source/**/*.dto.(in|out).ts",
+		"!source/**/*.entity.ts"
+	],
+	"coverageDirectory": "coverage",
+	"transform": {
+		"^.+\\.(t|j)s$": "ts-jest"
+	}
+}
+

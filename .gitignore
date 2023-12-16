@@ -1,0 +1,15 @@
+# NodeJs
+node_modules/
+
+# Typescript
+dist/
+*.tsbuildinfo
+
+# Sqlite
+database/
+
+# Env files
+*.env
+
+# Jest
+coverage/
