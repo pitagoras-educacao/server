@@ -30,6 +30,12 @@ export class PracticeTestController
 		return this.practiceTestService.getMany();
 	}
 
+	@Get('total')
+	public getTotal(): Promise<number>
+	{
+		return this.practiceTestService.getTotal();
+	}
+
 	@Get(':id')
 	public getOne(@Param() params: PracticeTestIdDto): Promise<PracticeTestDto>
 	{

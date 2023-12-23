@@ -22,6 +22,7 @@ const repositoryMock = {
 	update: jest.fn().mockReturnValue(entity),
 	findOne: jest.fn().mockReturnValue(entity),
 	find: jest.fn().mockReturnValue([entity]),
+	sum: jest.fn().mockReturnValue(0),
 	delete: jest.fn().mockReturnValue(null),
 };
 
@@ -98,6 +99,15 @@ describe('PracticeTestService', () =>
 		{
 			await service.getMany();
 			expect(repositoryMock.find).toHaveBeenCalledWith({ relations: ['subject'], order: { date: 'DESC' } });
+		});
+	});
+
+	describe('getTotal', () => 
+	{
+		test('should call sum method', async () => 
+		{
+			await service.getTotal();
+			expect(repositoryMock.sum).toHaveBeenCalledWith('number_of_questions');
 		});
 	});
 
