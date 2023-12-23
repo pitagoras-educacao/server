@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { TestApplication } from '../../test';
 import { Exam } from './exam.entity';
 import { ExamService } from './exam.service';
+import * as dayjs from 'dayjs';
 
 const entity: Exam = {
 	id: uuid(),
@@ -85,6 +86,29 @@ describe('ExamService', () =>
 		{
 			await service.getMany();
 			expect(repositoryMock.find).toHaveBeenCalledWith();
+		});
+	});
+
+	describe('getNext', () =>
+	{
+		test('should call getMany method', async () => 
+		{
+			const entities = [
+				{ ...entity },
+				{ ...entity, first_application_date: dayjs().add(1, 'day').toDate() },
+				{ ...entity, first_application_date: dayjs().add(2, 'day').toDate() },
+			] 
+
+			jest.spyOn(service, 'getMany').mockResolvedValueOnce(entities);
+
+			const result = await service.getNext();
+			expect(result).toEqual({
+				id: entity.id,
+				name: entity.name,
+				created_at: entity.created_at,
+				updated_at: entity.updated_at,
+				date: entities[1].first_application_date,
+			});
 		});
 	});
 

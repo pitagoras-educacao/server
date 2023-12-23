@@ -1,3 +1,4 @@
+import { PickType } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { IsDate, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
@@ -31,3 +32,11 @@ export class ExamDto
 
 }
 
+export class NextExamDto extends PickType(ExamDto, ['id', 'name', 'created_at', 'updated_at'])
+{
+	
+	@IsDate()
+	@Type(() => Date)
+	public date: Date;
+
+}

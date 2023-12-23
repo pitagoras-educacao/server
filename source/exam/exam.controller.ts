@@ -23,16 +23,22 @@ export class ExamController
 		return (this.examService.update(params.id, body));
 	}
 
-	@Get(':id')
-	public getOne(@Param() params: ExamIdDto): Promise<ExamDto> 
-	{
-		return (this.examService.getOne(params.id));
-	}
-
 	@Get('')
 	public getMany(): Promise<ExamDto[]> 
 	{
 		return (this.examService.getMany());
+	}
+
+	@Get('next')
+	public getNext(): Promise<ExamDto> 
+	{
+		return (this.examService.getNext());
+	}
+
+	@Get(':id')
+	public getOne(@Param() params: ExamIdDto): Promise<ExamDto> 
+	{
+		return (this.examService.getOne(params.id));
 	}
 
 	@Delete(':id')

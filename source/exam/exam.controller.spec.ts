@@ -9,6 +9,7 @@ const serviceMock = {
 	update: jest.fn(),
 	getOne: jest.fn(),
 	getMany: jest.fn(),
+	getNext: jest.fn(),
 	delete: jest.fn()
 };
 
@@ -172,6 +173,15 @@ describe('ExamController', () =>
 		test('[200] should return the exam', async () =>
 		{
 			await app.get('/exam/' + uuid())
+				.expect(HttpStatus.OK);
+		});
+	});
+
+	describe('GET /exam/next', () =>
+	{
+		test('[200] should return the next exam', async () =>
+		{
+			await app.get('/exam/next')
 				.expect(HttpStatus.OK);
 		});
 	});
