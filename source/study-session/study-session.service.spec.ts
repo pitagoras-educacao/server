@@ -103,7 +103,24 @@ describe('StudySessionService', () =>
 			jest.spyOn(service, 'getMany').mockResolvedValueOnce([{ duration: 10 }, { duration: 20 }] as any);
 			const response = await service.getTotal();
 
-			expect(response).toEqual(30);
+			expect(response).toEqual({ total: 30 });
+		});
+	});
+
+	describe('getTotalBySubject', () =>
+	{
+		test('should return total duration by subject', async () => {
+			jest.spyOn(service, 'getMany').mockResolvedValueOnce([
+				{ subject: { id: '1' }, duration: 10 },
+				{ subject: { id: '2' }, duration: 20 },
+				{ subject: { id: '1' }, duration: 30 },
+			] as any);
+			const response = await service.getTotalBySubject();
+
+			expect(response).toEqual([
+				{ subject: { id: '1' }, total: 40 },
+				{ subject: { id: '2' }, total: 20 },
+			]);
 		});
 	});
 

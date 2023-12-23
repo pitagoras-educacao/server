@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
 import { Repository } from 'typeorm';
 import { StudySessionCreateDto, StudySessionUpdateDto } from './study-session.dto.in';
-import { StudySessionDto } from './study-session.dto.out';
+import { StudySessionDto, StudySessionSummaryBySubjectDto, StudySessionSummaryDto } from './study-session.dto.out';
 import { StudySession } from './study-session.entity';
 
 @Injectable()
@@ -15,18 +15,18 @@ export class StudySessionService
 		private readonly studySessionRepository: Repository<StudySession>,
 	) { }
 
-	private getDuration(init: Date, end: Date): number
+	private getDuration(session: StudySession): number
 	{
-		const d1 = dayjs(init);
-		const d2 = dayjs(end);
+		const d1 = dayjs(session.init);
+		const d2 = dayjs(session.end);
 
-		return (d2.diff(d1, 'minute'));
+		return d2.diff(d1, 'minute');
 	}
 
-	private buildStudySessionDto(study_session: StudySession): StudySessionDto
+	private buildStudySessionDto(session: StudySession): StudySessionDto
 	{
-		const duration = this.getDuration(study_session.init, study_session.end);
-		return ({ ...study_session, duration });
+		const duration = this.getDuration(session);
+		return ({ ...session, duration });
 	}
 	
 	public async create(params: StudySessionCreateDto): Promise<StudySessionDto>
@@ -54,11 +54,41 @@ export class StudySessionService
 		const study_sessions = await this.studySessionRepository.find({ relations: [ 'subject' ], order: { init: 'DESC' } });
 		return (study_sessions.map((study_session) => this.buildStudySessionDto(study_session)));
 	}
+
+	private calcTotal(sessions: StudySessionDto[]): number
+	{
+		return sessions.reduce((acc, session) => {
+			return acc + session.duration
+		}, 0);
+	}
 	
-	public async getTotal(): Promise<number>
+	public async getTotal(): Promise<StudySessionSummaryDto>
 	{
 		const sessions = await this.getMany();
-		return sessions.reduce((acc, session) => acc + session.duration, 0);
+		return ({
+			total: this.calcTotal(sessions),
+		})
+	}
+
+	public async getTotalBySubject(): Promise<StudySessionSummaryBySubjectDto[]>
+	{
+		const sessions: StudySessionDto[] = await this.getMany();
+
+		const sessions_by_subject: Record<string, StudySessionDto[]> = {};
+		for (const session of sessions)
+		{
+			const subject_id = session.subject.id;
+			
+			if (!sessions_by_subject[subject_id])
+				sessions_by_subject[subject_id] = [];
+
+			sessions_by_subject[subject_id].push(session);
+		}
+		
+		return Object.values(sessions_by_subject).map((sessions) => ({
+			subject: sessions[0].subject,
+			total: this.calcTotal(sessions),
+		}));
 	}
 
 	public async delete(id: string): Promise<void>

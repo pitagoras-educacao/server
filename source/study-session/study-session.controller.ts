@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Patch, Post } from '@nestjs/common';
 import { StudySessionService } from './study-session.service';
 import { StudySessionCreateDto, StudySessionIdDto, StudySessionUpdateDto } from './study-session.dto.in';
-import { StudySessionDto } from './study-session.dto.out';
+import { StudySessionDto, StudySessionSummaryBySubjectDto, StudySessionSummaryDto } from './study-session.dto.out';
 
 @Controller('study-session')
 export class StudySessionController
@@ -30,9 +30,15 @@ export class StudySessionController
 	}
 
 	@Get('total')
-	public getTotal(): Promise<number>
+	public getTotal(): Promise<StudySessionSummaryDto>
 	{
 		return this.studySessionService.getTotal();
+	}
+
+	@Get('total-by-subject')
+	public getTotalBySubject(): Promise<StudySessionSummaryBySubjectDto[]>
+	{
+		return this.studySessionService.getTotalBySubject();
 	}
 
 	@Get(':id')

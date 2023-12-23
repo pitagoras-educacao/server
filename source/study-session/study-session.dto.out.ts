@@ -36,3 +36,27 @@ export class StudySessionDto
 	public updated_at: Date;
 
 }
+
+export class StudySessionSummaryDto
+{
+
+	@IsNumber()
+	@Type(() => Number)
+	public total: number;
+
+}
+
+export class StudySessionSummaryBySubjectDto
+{
+
+	@IsNumber()
+	@Type(() => Number)
+	public total: number;
+
+	@IsObject()
+	@IsNotEmptyObject()
+	@ValidateNested()
+	@Type(() => Subject)
+	public subject: Subject;
+
+}
