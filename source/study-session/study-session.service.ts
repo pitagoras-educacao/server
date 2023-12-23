@@ -48,11 +48,17 @@ export class StudySessionService
 		if (study_session)
 			return (this.buildStudySessionDto(study_session));
 	}
-
+	
 	public async getMany(): Promise<StudySessionDto[]>
 	{
 		const study_sessions = await this.studySessionRepository.find({ relations: [ 'subject' ], order: { init: 'DESC' } });
 		return (study_sessions.map((study_session) => this.buildStudySessionDto(study_session)));
+	}
+	
+	public async getTotal(): Promise<number>
+	{
+		const sessions = await this.getMany();
+		return sessions.reduce((acc, session) => acc + session.duration, 0);
 	}
 
 	public async delete(id: string): Promise<void>

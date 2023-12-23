@@ -9,6 +9,7 @@ const serviceMock = {
 	update: jest.fn().mockReturnValue({}),
 	getOne: jest.fn().mockReturnValue({}),
 	getMany: jest.fn().mockReturnValue([]),
+	getTotal: jest.fn().mockReturnValue(0),
 	delete: jest.fn().mockReturnValue({}),
 };
 
@@ -199,6 +200,15 @@ describe('StudySessionController', () =>
 		test('[200] should return an array of study sessions', async () =>
 		{
 			await app.get('/study-session')
+				.expect(HttpStatus.OK);
+		});
+	});
+
+	describe('getTotal', () =>
+	{
+		test('[200] should return a number', async () =>
+		{
+			await app.get('/study-session/total')
 				.expect(HttpStatus.OK);
 		});
 	});

@@ -29,6 +29,12 @@ export class StudySessionController
 		return this.studySessionService.getMany();
 	}
 
+	@Get('total')
+	public getTotal(): Promise<number>
+	{
+		return this.studySessionService.getTotal();
+	}
+
 	@Get(':id')
 	public getOne(@Param() params: StudySessionIdDto): Promise<StudySessionDto>
 	{

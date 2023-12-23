@@ -97,6 +97,16 @@ describe('StudySessionService', () =>
 		});
 	});
 
+	describe('getTotal', () =>
+	{
+		test('should return total duration', async () => {
+			jest.spyOn(service, 'getMany').mockResolvedValueOnce([{ duration: 10 }, { duration: 20 }] as any);
+			const response = await service.getTotal();
+
+			expect(response).toEqual(30);
+		});
+	});
+
 	describe('delete', () =>
 	{
 		test('should call repository delete method', async () =>
