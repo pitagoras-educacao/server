@@ -14,8 +14,8 @@ import { PracticeExam } from './practice-exam/practice-exam.entity';
 @Module({
 	imports: [
 		TypeOrmModule.forRoot({
-			type: 'sqlite',
-			database: 'database/study-tracker.db',
+			type: 'postgres',
+			url: process.env.DATABASE_URL,
 			entities: [
 				Subject,
 				StudySession,

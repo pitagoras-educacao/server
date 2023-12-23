@@ -12,11 +12,7 @@ async function bootstrap(): Promise<void>
 		forbidNonWhitelisted: true
 	}));
 
-	app.setGlobalPrefix('/api');
-
-	app.enableCors();
-
-	await app.listen(3000);
+	await app.listen(80);
 }
 
 bootstrap();
