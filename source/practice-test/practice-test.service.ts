@@ -53,9 +53,21 @@ export class PracticeTestService
 		return (practice_tests.map((practice_test) => this.buildPracticeTestDto(practice_test)));
 	}
 
-	public async getTotal(): Promise<number>
+	public async getTotalQuestions(): Promise<number>
 	{
 		return (this.practiceTestRepository.sum('number_of_questions'));
+	}
+
+	public async getTotalHits(): Promise<number>
+	{
+		const questions = await this.getTotalQuestions();
+		const hits = await this.practiceTestRepository.sum('number_of_hits');
+
+		return new BigNumber(hits)
+			.dividedBy(questions)
+			.multipliedBy(100)
+			.decimalPlaces(2)
+			.toNumber();
 	}
 
 	public async delete(id: string): Promise<void>

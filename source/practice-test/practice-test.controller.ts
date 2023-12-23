@@ -30,10 +30,16 @@ export class PracticeTestController
 		return this.practiceTestService.getMany();
 	}
 
-	@Get('total')
+	@Get('total-questions')
 	public getTotal(): Promise<number>
 	{
-		return this.practiceTestService.getTotal();
+		return this.practiceTestService.getTotalQuestions();
+	}
+
+	@Get('total-hits')
+	public getTotalHits(): Promise<number>
+	{
+		return this.practiceTestService.getTotalHits();
 	}
 
 	@Get(':id')

@@ -106,8 +106,20 @@ describe('PracticeTestService', () =>
 	{
 		test('should call sum method', async () => 
 		{
-			await service.getTotal();
+			await service.getTotalQuestions();
 			expect(repositoryMock.sum).toHaveBeenCalledWith('number_of_questions');
+		});
+	});
+
+	describe('getTotalHits', () =>
+	{
+		test('should call getTotalQuestions and sum methods', async () =>
+		{
+			jest.spyOn(service, 'getTotalQuestions').mockResolvedValueOnce(100);
+			jest.spyOn(repositoryMock, 'sum').mockResolvedValueOnce(50);
+			const response = await service.getTotalHits();
+
+			expect(response).toEqual(50);
 		});
 	});
 

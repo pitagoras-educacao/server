@@ -9,7 +9,8 @@ const serviceMock = {
 	update: jest.fn().mockReturnValue(null),
 	getOne: jest.fn().mockReturnValue({}),
 	getMany: jest.fn().mockReturnValue([]),
-	getTotal: jest.fn().mockReturnValue(0),
+	getTotalQuestions: jest.fn().mockReturnValue(0),
+	getTotalHits: jest.fn().mockReturnValue(0),
 	delete: jest.fn().mockReturnValue(null),
 };
 
@@ -221,11 +222,20 @@ describe('PracticeTestController', () =>
 		});
 	});
 
-	describe('getTotal', () =>
+	describe('getTotalQuestions', () =>
 	{
-		test('[200] should get total', async () =>
+		test('[200] should get total questions', async () =>
 		{
-			await app.get('/practice-test/total')
+			await app.get('/practice-test/total-questions')
+				.expect(HttpStatus.OK);
+		});
+	});
+
+	describe('getTotalHits', () =>
+	{
+		test('[200] should get total hits', async () =>
+		{
+			await app.get('/practice-test/total-hits')
 				.expect(HttpStatus.OK);
 		});
 	});
