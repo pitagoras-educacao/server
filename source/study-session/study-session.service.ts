@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
-import { Repository } from 'typeorm';
-import { StudySessionCreateDto, StudySessionUpdateDto } from './study-session.dto.in';
-import { StudySessionDto, StudySessionSummaryBySubjectDto, StudySessionSummaryDto } from './study-session.dto.out';
+import { MoreThan, Repository } from 'typeorm';
+import { StudySessionCreateDto, StudySessionSummaryByDateListDto, StudySessionUpdateDto } from './study-session.dto.in';
+import { StudySessionDto, StudySessionSummaryBySubjectDto, StudySessionSummaryByDateDto, StudySessionSummaryDto } from './study-session.dto.out';
 import { StudySession } from './study-session.entity';
 
 @Injectable()
@@ -87,6 +87,29 @@ export class StudySessionService
 		
 		return Object.values(sessions_by_subject).map((sessions) => ({
 			subject: sessions[0].subject,
+			total: this.calcTotal(sessions),
+		}));
+	}
+
+	public async getTotalByDate(params: StudySessionSummaryByDateListDto): Promise<StudySessionSummaryByDateDto[]>
+	{
+		const sessions = await this.studySessionRepository.find({
+			where: { init: MoreThan(dayjs().subtract(params.days, 'day').toDate()) }
+		});
+
+		const sessions_by_date: Record<string, StudySessionDto[]> = {};
+		for (const session of sessions)
+		{
+			const date = dayjs(session.init).format('YYYY-MM-DD');
+			
+			if (!sessions_by_date[date])
+				sessions_by_date[date] = [];
+
+			sessions_by_date[date].push(this.buildStudySessionDto(session));
+		}
+
+		return Object.entries(sessions_by_date).map(([date, sessions]) => ({
+			date: dayjs(date).toDate(),
 			total: this.calcTotal(sessions),
 		}));
 	}

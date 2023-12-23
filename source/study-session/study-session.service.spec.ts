@@ -4,6 +4,7 @@ import { TestApplication } from '../../test';
 import { Subject } from '../subject/subject.entity';
 import { StudySession } from './study-session.entity';
 import { StudySessionService } from './study-session.service';
+import * as dayjs from 'dayjs';
 
 const entity: StudySession = {
 	id: uuid(),
@@ -100,7 +101,10 @@ describe('StudySessionService', () =>
 	describe('getTotal', () =>
 	{
 		test('should return total duration', async () => {
-			jest.spyOn(service, 'getMany').mockResolvedValueOnce([{ duration: 10 }, { duration: 20 }] as any);
+			jest.spyOn(service, 'getMany').mockResolvedValueOnce([
+				{ duration: 10 },
+				{ duration: 20 },
+			] as any);
 			const response = await service.getTotal();
 
 			expect(response).toEqual({ total: 30 });
@@ -120,6 +124,23 @@ describe('StudySessionService', () =>
 			expect(response).toEqual([
 				{ subject: { id: '1' }, total: 40 },
 				{ subject: { id: '2' }, total: 20 },
+			]);
+		});
+	});
+
+	describe('getTotalByDate', () =>
+	{
+		test('should return total duration by date', async () => {
+			jest.spyOn(repositoryMock, 'find').mockResolvedValueOnce([
+				{ init: '2020-01-01T00:00', end: '2020-01-01T00:10' },
+				{ init: '2020-01-02T00:00', end: '2020-01-02T00:30' },
+				{ init: '2020-01-01T01:00', end: '2020-01-01T01:20' },
+			] as any);
+			const response = await service.getTotalByDate({ days: 7 });
+
+			expect(response).toEqual([
+				{ date: dayjs('2020-01-01').toDate(), total: 30 },
+				{ date: dayjs('2020-01-02').toDate(), total: 30 },
 			]);
 		});
 	});

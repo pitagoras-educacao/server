@@ -60,3 +60,16 @@ export class StudySessionSummaryBySubjectDto
 	public subject: Subject;
 
 }
+
+export class StudySessionSummaryByDateDto
+{
+	
+	@IsDate()
+	@Type(() => Date)
+	public date: Date;
+
+	@IsNumber()
+	@Type(() => Number)
+	public total: number;
+
+}
