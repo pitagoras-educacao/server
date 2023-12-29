@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as dayjs from 'dayjs';
-import { MoreThan, Repository } from 'typeorm';
-import { StudySessionCreateDto, StudySessionSummaryByDateListDto, StudySessionUpdateDto } from './study-session.dto.in';
+import { FindManyOptions, LessThanOrEqual, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
+import { StudySessionCreateDto, StudySessionListDto, StudySessionSummaryByDateListDto, StudySessionUpdateDto } from './study-session.dto.in';
 import { StudySessionDto, StudySessionSummaryBySubjectDto, StudySessionSummaryByDateDto, StudySessionSummaryDto } from './study-session.dto.out';
 import { StudySession } from './study-session.entity';
 
@@ -48,10 +48,31 @@ export class StudySessionService
 		if (study_session)
 			return (this.buildStudySessionDto(study_session));
 	}
-	
-	public async getMany(): Promise<StudySessionDto[]>
+
+	private buildQueryOptions(params: StudySessionListDto): FindManyOptions<StudySession>
 	{
-		const study_sessions = await this.studySessionRepository.find({ relations: [ 'subject' ], order: { init: 'DESC' } });
+		const options: FindManyOptions = {
+			relations: [ 'subject' ],
+			order: { init: 'DESC' },
+			where: { },
+		};
+
+		if (params.initDate)
+			options.where['init'] = MoreThanOrEqual(params.initDate);
+		if (params.endDate)
+			options.where['end'] = LessThanOrEqual(params.endDate);
+		if (params.subject)
+			options.where['subject'] = { id: params.subject };
+
+		return options;
+	}
+	
+	public async getMany(params?: StudySessionListDto): Promise<StudySessionDto[]>
+	{
+		const study_sessions = await this.studySessionRepository.find(
+			this.buildQueryOptions(params)
+		);
+
 		return (study_sessions.map((study_session) => this.buildStudySessionDto(study_session)));
 	}
 
